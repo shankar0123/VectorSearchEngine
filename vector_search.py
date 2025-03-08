@@ -45,3 +45,33 @@ index = {doc_id: create_concordance(text.lower()) for doc_id, text in documents.
 if __name__ == "__main__":
     for doc_id, concordance in index.items():
         print(f"Document {doc_id}: {concordance}")
+
+        """
+Vector Search Engine: Step 4 - Search Query
+Allows users to search for relevant documents using vector similarity.
+"""
+
+def search(query):
+    """
+    Finds the most relevant documents based on cosine similarity.
+    
+    :param query: str - Search term(s).
+    :return: list - Sorted list of relevant documents.
+    """
+    query_vector = create_concordance(query.lower())
+    matches = [(v.similarity(query_vector, index[doc_id]), doc_id) for doc_id in index]
+    
+    # Sort results in descending order of relevance
+    matches = sorted(matches, reverse=True, key=lambda x: x[0])
+    
+    return matches
+
+# Example search:
+if __name__ == "__main__":
+    query = input("Enter search term: ")
+    results = search(query)
+    
+    print("\nTop Matching Documents:")
+    for score, doc_id in results:
+        if score > 0:
+            print(f"Relevance: {score:.3f} - Document {doc_id}: {documents[doc_id]}")
